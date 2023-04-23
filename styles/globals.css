@@ -5,3 +5,6 @@
 * {
   @apply font-medium;
 }
+.center {
+  @apply sm:container mx-auto px-5;
+}

@@ -11,9 +11,9 @@ interface HeaderProps {
 const Header: FC<HeaderProps> = ({ }) => {
     const navLink = `text-gray-100/70 px-2`;
     const popOverLink = `text-black px-2 my-3`;
-    return <div className='bg-[#222]'>
+    return <div className='bg-main'>
 
-        <Popover className="sm:container mx-auto flex justify-between px-5 py-5">
+        <Popover className="center flex justify-between py-5">
             <Link className='text-white' href={'/'}>Ecommerce</Link>
             <nav className='hidden sm:flex'>
                 <Link className={navLink} href={'/'}>Home</Link>
