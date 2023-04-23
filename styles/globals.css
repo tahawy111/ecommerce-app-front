@@ -5,6 +5,62 @@
 * {
   @apply font-medium;
 }
+
+body {
+  @apply bg-[#f0f0f0];
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @apply font-extrabold;
+}
+
+h1 {
+  @apply text-4xl;
+}
+h2 {
+  @apply text-2xl;
+}
+h3 {
+  @apply text-lg;
+}
+h4 {
+  @apply text-base;
+}
+h5 {
+  @apply text-sm;
+}
+h6 {
+  @apply text-[10px];
+}
+
 .center {
   @apply sm:container mx-auto px-5;
+}
+.btn-primary {
+  @apply bg-primary text-white px-4 rounded-sm font-semibold shadow-sm;
+}
+.btn-primary-outline {
+  @apply bg-transparent text-primary border border-primary px-4 rounded-sm font-semibold shadow-sm hover:bg-primary hover:text-white transition-colors;
+}
+.btn-danger {
+  @apply bg-red-200 text-red-600 px-4 rounded-sm font-semibold shadow-sm;
+}
+.btn-default,
+.btn-red,
+.btn-outline {
+  @apply px-4 py-1 rounded-sm;
+}
+.btn-red {
+  @apply bg-red-500 text-white;
+}
+.btn-default {
+  @apply bg-white text-gray-800 border border-gray-200 shadow-sm;
+}
+.btn-outline {
+  @apply bg-transparent text-white border border-gray-200 shadow-sm;
 }
