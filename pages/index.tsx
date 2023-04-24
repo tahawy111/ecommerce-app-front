@@ -11,8 +11,6 @@ interface HomeProps {
 }
 
 const Home: FC<HomeProps> = ({ featuredProduct, newProducts }) => {
-  console.log(newProducts);
-
   return <div>
     <Header />
     <Featured product={featuredProduct} />
