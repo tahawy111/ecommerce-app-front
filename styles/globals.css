@@ -16,7 +16,7 @@ h3,
 h4,
 h5,
 h6 {
-  @apply font-extrabold;
+  @apply font-bold;
 }
 
 h1 {
@@ -63,4 +63,30 @@ h6 {
 }
 .btn-outline {
   @apply bg-transparent text-white border border-gray-200 shadow-sm;
+}
+table.basic {
+  @apply w-full text-left bg-white shadow-sm rounded-sm;
+}
+table.basic thead tr th {
+  @apply text-sm text-gray-600 uppercase;
+}
+table.basic tbody tr td {
+  @apply border-t border-gray-200;
+}
+table.basic tbody tr td,
+table.basic thead tr th {
+  @apply px-4 py-1;
+}
+table.basic a {
+  @apply px-4 rounded-sm inline-flex mx-1 items-center gap-1 text-sm py-1;
+}
+input,
+textarea,
+select {
+  @apply border border-gray-200 rounded-sm py-2 w-full mb-2 shadow-sm px-1;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  @apply outline-none border-blue-900;
 }

@@ -1,6 +1,8 @@
 import { Popover, Transition } from '@headlessui/react';
 import Link from 'next/link';
-import { FC, Fragment } from 'react';
+import { FC, Fragment, useContext } from 'react';
+import { CartContext } from './contexts/CartContext';
+import NavLinks from './NavLinks';
 
 // make links component to repeat it in any place
 
@@ -9,18 +11,14 @@ interface HeaderProps {
 }
 
 const Header: FC<HeaderProps> = ({ }) => {
-    const navLink = `text-gray-100/70 px-2`;
-    const popOverLink = `text-black px-2 my-3`;
+
+
     return <div className='bg-main'>
 
         <Popover className="center flex justify-between py-5">
             <Link className='text-white' href={'/'}>Ecommerce</Link>
             <nav className='hidden sm:flex'>
-                <Link className={navLink} href={'/'}>Home</Link>
-                <Link className={navLink} href={'/products'}>All products</Link>
-                <Link className={navLink} href={'/categories'}>Categories</Link>
-                <Link className={navLink} href={'/account'}>Account</Link>
-                <Link className={navLink} href={'/cart'}>Cart (0)</Link>
+                <NavLinks />
             </nav>
 
             <Popover.Button className={`text-white sm:hidden`}>
@@ -57,13 +55,7 @@ const Header: FC<HeaderProps> = ({ }) => {
                             </div>
 
                             <div className="mt-6">
-                                <nav className='flex flex-col'>
-                                    <Link className={popOverLink} href={'/'}>Home</Link>
-                                    <Link className={popOverLink} href={'/products'}>All products</Link>
-                                    <Link className={popOverLink} href={'/categories'}>Categories</Link>
-                                    <Link className={popOverLink} href={'/account'}>Account</Link>
-                                    <Link className={popOverLink} href={'/cart'}>Cart (0)</Link>
-                                </nav>
+                                <NavLinks popOver />
                             </div>
 
                         </div>
