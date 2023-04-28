@@ -12,8 +12,8 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
       <CartContextProvider>
         <SessionProvider session={session}>
           <Toaster />
-          <PayPalScriptProvider deferLoading={true} options={{ "client-id": `${process.env.PAYPAL_CLIENT_ID}`, currency: `${process.env.CURRENCY}` }}>
-            <Component {...pageProps} />
+          <PayPalScriptProvider options={{ "client-id": `${process.env.PAYPAL_CLIENT_ID}`, currency: `${process.env.CURRENCY}` }} >
+          <Component {...pageProps} />
           </PayPalScriptProvider>
         </SessionProvider>
       </CartContextProvider>

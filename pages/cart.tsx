@@ -7,15 +7,53 @@ import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import { FC, useContext, useEffect, useState } from 'react';
+import { FC, useContext, useEffect, useReducer, useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 interface CartPageProps {
 
 }
 
+function reducer(state: any, action: any) {
+    switch (action.type) {
+        case 'FETCH_REQUEST':
+            return { ...state, loading: true, error: '' };
+        case 'FETCH_SUCCESS':
+            return { ...state, loading: false, order: action.payload, error: '' };
+        case 'FETCH_FAIL':
+            return { ...state, loading: false, error: action.payload };
+        case 'PAY_REQUEST':
+            return { ...state, loadingPay: true };
+        case 'PAY_SUCCESS':
+            return { ...state, loadingPay: false, successPay: true };
+        case 'PAY_FAIL':
+            return { ...state, loadingPay: false };
+        case 'PAY_RESET':
+            return { ...state, loadingPay: false, successPay: false };
+
+        case 'DELIVER_REQUEST':
+            return { ...state, loadingDeliver: true };
+        case 'DELIVER_SUCCESS':
+            return { ...state, loadingDeliver: false, successDeliver: true };
+        case 'DELIVER_FAIL':
+            return { ...state, loadingDeliver: false };
+        case 'DELIVER_RESET':
+            return {
+                ...state,
+                loadingDeliver: false,
+                successDeliver: false,
+            };
+        default:
+            return state;
+    }
+}
+
 const CartPage: FC<CartPageProps> = ({ }): any => {
     const { cartProducts, addProduct, removeProduct } = useContext(CartContext);
+    const [{ loading, error, order, successPay, loadingPay }, dispatch] = useReducer(reducer,
+        {
+            loading: true, error: "", order: {}, successPay: false, loadingPay: false
+        });
     const [products, setProducts] = useState<IProduct[]>();
     useEffect(() => {
         if (cartProducts.length > 0) {
@@ -44,43 +82,40 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
 
     const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
-    function createOrder(data:any, actions:any) {
+    function createOrder(data: any, actions: any) {
         return actions.order
-          .create({
-            purchase_units: [
-              {
-                amount: { value: total },
-              },
-            ],
-          })
-          .then((orderID: any) => {
-            return orderID;
-          });
+            .create({
+                purchase_units: [
+                    {
+                        amount: { value: total },
+                    },
+                ],
+            })
+            .then((orderID: any) => {
+                return orderID;
+            });
     }
 
-    function onApprove(data, actions) {
-        return actions.order.capture().then(async function (details) {
-          try {
-            dispatch(payWithPaypalRequest());
-            const { data } = await axiosIntance.put(
-              `/orders/${order._id}/pay`,
-              details
-            );
-    
-            dispatch(payWithPaypalSuccess(data));
-            dispatch(getOrderById(order._id)).then(() => {
-              toast.success("Order is paid");
-            });
-          } catch (error) {
-            dispatch(payWithPaypalFailure(error));
-            toast.error(error.response.data.error);
-          }
+    function onApprove(data: any, actions: any) {
+        return actions.order.capture().then(async function (details: any) {
+              try {
+                dispatch({type:"PAY_REQUEST"});
+                // const { data } = await axios.put(
+                //   `/orders/${order._id}/pay`,
+                //   details
+                // );
+
+                dispatch({type:"PAY_SUCCESS",payload:true});
+                toast.success("Order is paid")
+              } catch (error:any) {
+                toast.error(error.response.data.error);
+              }
         });
-      }
-      function onError(err:any) {
+    }
+    function onError(err: any) {
         toast.error(err);
-      }
-    
+    }
+
 
     return <div>
         <Header />
@@ -139,9 +174,7 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
                     </div>
                     <Input placeholder='Street Address' />
                     <Input placeholder='Country' />
-                    <PayPalButtons createOrder={createOrder} onApprove={onApprove} onError={onError}>
-
-                    </PayPalButtons>
+                    <PayPalButtons createOrder={createOrder} onApprove={onApprove} onError={onError} ></PayPalButtons>
                 </div>)}
         </div>
     </div>;
