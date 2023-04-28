@@ -1,15 +1,20 @@
 import Header from '@/components/Header';
 import Input from '@/components/Input';
+import Spinner from '@/components/Spinner';
 import { CartContext } from '@/components/contexts/CartContext';
 import { IProduct } from '@/models/Product';
+import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import axios from 'axios';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import { FC, useContext, useEffect, useState } from 'react';
+import { toast } from 'react-hot-toast';
 
 interface CartPageProps {
 
 }
 
-const CartPage: FC<CartPageProps> = ({ }) => {
+const CartPage: FC<CartPageProps> = ({ }): any => {
     const { cartProducts, addProduct, removeProduct } = useContext(CartContext);
     const [products, setProducts] = useState<IProduct[]>();
     useEffect(() => {
@@ -23,6 +28,59 @@ const CartPage: FC<CartPageProps> = ({ }) => {
         const price = products?.find((p: IProduct) => p._id === productId)?.price || 0;
         total += price;
     }
+
+    const { data: session, status } = useSession();
+    const router = useRouter();
+
+    if (session === undefined && status === "loading") {
+        return <div className="flex w-full h-screen justify-center items-center">
+            <Spinner loading />
+        </div>;
+    }
+    if (!session) {
+        router.push('/login');
+        return;
+    };
+
+    const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
+
+    function createOrder(data:any, actions:any) {
+        return actions.order
+          .create({
+            purchase_units: [
+              {
+                amount: { value: total },
+              },
+            ],
+          })
+          .then((orderID: any) => {
+            return orderID;
+          });
+    }
+
+    function onApprove(data, actions) {
+        return actions.order.capture().then(async function (details) {
+          try {
+            dispatch(payWithPaypalRequest());
+            const { data } = await axiosIntance.put(
+              `/orders/${order._id}/pay`,
+              details
+            );
+    
+            dispatch(payWithPaypalSuccess(data));
+            dispatch(getOrderById(order._id)).then(() => {
+              toast.success("Order is paid");
+            });
+          } catch (error) {
+            dispatch(payWithPaypalFailure(error));
+            toast.error(error.response.data.error);
+          }
+        });
+      }
+      function onError(err:any) {
+        toast.error(err);
+      }
+    
 
     return <div>
         <Header />
@@ -81,7 +139,9 @@ const CartPage: FC<CartPageProps> = ({ }) => {
                     </div>
                     <Input placeholder='Street Address' />
                     <Input placeholder='Country' />
-                    <button className='btn-primary py-1'>Continue To Payment</button>
+                    <PayPalButtons createOrder={createOrder} onApprove={onApprove} onError={onError}>
+
+                    </PayPalButtons>
                 </div>)}
         </div>
     </div>;
