@@ -3,7 +3,7 @@ import Input from '@/components/Input';
 import Spinner from '@/components/Spinner';
 import { CartContext } from '@/components/contexts/CartContext';
 import { IProduct } from '@/models/Product';
-import { PayPalButtons, usePayPalScriptReducer } from '@paypal/react-paypal-js';
+import { PayPalButtons, PayPalScriptProvider, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
@@ -80,7 +80,6 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
         return;
     };
 
-    const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
     function createOrder(data: any, actions: any) {
         return actions.order
@@ -98,18 +97,18 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
 
     function onApprove(data: any, actions: any) {
         return actions.order.capture().then(async function (details: any) {
-              try {
-                dispatch({type:"PAY_REQUEST"});
+            try {
+                dispatch({ type: "PAY_REQUEST" });
                 // const { data } = await axios.put(
                 //   `/orders/${order._id}/pay`,
                 //   details
                 // );
 
-                dispatch({type:"PAY_SUCCESS",payload:true});
-                toast.success("Order is paid")
-              } catch (error:any) {
+                dispatch({ type: "PAY_SUCCESS", payload: true });
+                toast.success("Order is paid");
+            } catch (error: any) {
                 toast.error(error.response.data.error);
-              }
+            }
         });
     }
     function onError(err: any) {
@@ -174,7 +173,30 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
                     </div>
                     <Input placeholder='Street Address' />
                     <Input placeholder='Country' />
-                    <PayPalButtons createOrder={createOrder} onApprove={onApprove} onError={onError} ></PayPalButtons>
+
+
+                    <PayPalScriptProvider options={{ "client-id": `${process.env.PAYPAL_CLIENT_ID}`, "currency": `${process.env.CURRENCY}` }}>
+                        {total && (
+                            <PayPalButtons
+                                createOrder={async (data, actions) => {
+
+                                    const orderId = await actions.order
+                                        .create({
+                                            purchase_units: [
+                                                {
+                                                    amount: {
+                                                        value: `${total}`,
+                                                    },
+                                                },
+                                            ],
+                                        });
+                                    return orderId;
+                                }}
+                            />
+                        )}
+                    </PayPalScriptProvider>
+
+
                 </div>)}
         </div>
     </div>;
