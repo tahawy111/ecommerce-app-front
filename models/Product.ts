@@ -14,6 +14,7 @@ export interface IProduct {
     properties: any;
     createdAt?: string;
     updatedAt?: string;
+    inStock: number;
 }
 
 type ProductDocument = Document & IProduct;
@@ -25,8 +26,11 @@ const ProductSchema = new Schema<ProductDocument>({
     category: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
     images: [{ public_id: { type: String, required: true }, url: { type: String, required: true } }],
     properties: [{ type: Object }],
+    inStock: { type: Number, required: true }
 }, {
     timestamps: true,
 });
 
-export default models.Product as Model<ProductDocument> || model<ProductDocument>('Product', ProductSchema);
+const PoductModel = models?.Product as Model<ProductDocument> || model<ProductDocument>('Product', ProductSchema);
+
+export default PoductModel;

@@ -6,13 +6,15 @@ export interface CartContextInteface {
     setCartProducts: Dispatch<SetStateAction<string[]>>;
     addProduct: (productId: string) => void;
     removeProduct: (productId: string) => void;
+    clearCart: () => void;
 }
 
 const defaultValue = {
     cartProducts: [],
     setCartProducts: () => { },
     addProduct: () => { },
-    removeProduct: () => { }
+    removeProduct: () => { },
+    clearCart: () => { },
 } as CartContextInteface;
 
 // export const CartContext = createContext<Partial<CartContextInteface>>({}); use <Partial<CartContextInteface>> if you don't know the inital value
@@ -40,6 +42,10 @@ export function CartContextProvider({ children }: { children: ReactNode; }) {
             return prev;
         });
     }
+    function clearCart() {
+        ls?.removeItem("cart");
+        setCartProducts([]);
+    }
 
     useEffect(() => {
         if (ls && ls.getItem("cart")) {
@@ -47,7 +53,7 @@ export function CartContextProvider({ children }: { children: ReactNode; }) {
         }
     }, []);
 
-    return <CartContext.Provider value={{ cartProducts, setCartProducts, addProduct, removeProduct }}>
+    return <CartContext.Provider value={{ cartProducts, setCartProducts, addProduct, removeProduct, clearCart }}>
         {children}
     </CartContext.Provider>;
 }

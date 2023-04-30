@@ -2,7 +2,8 @@ import Header from '@/components/Header';
 import Input from '@/components/Input';
 import Spinner from '@/components/Spinner';
 import { CartContext } from '@/components/contexts/CartContext';
-import { IProduct } from '@/models/Product';
+import { InputChange } from '@/lib/type';
+import Product, { IProduct } from '@/models/Product';
 import { PayPalButtons, PayPalScriptProvider, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
@@ -49,11 +50,12 @@ function reducer(state: any, action: any) {
 }
 
 const CartPage: FC<CartPageProps> = ({ }): any => {
-    const { cartProducts, addProduct, removeProduct } = useContext(CartContext);
-    const [{ loading, error, order, successPay, loadingPay }, dispatch] = useReducer(reducer,
-        {
-            loading: true, error: "", order: {}, successPay: false, loadingPay: false
-        });
+    const { cartProducts, addProduct, removeProduct,clearCart } = useContext(CartContext);
+    const [addressData, setAddressData] = useState<object>();
+    const handleAddress = ({ target }: InputChange) => {
+        setAddressData({ ...addressData, [target.name]: target.value });
+    };
+
     const [products, setProducts] = useState<IProduct[]>();
     useEffect(() => {
         if (cartProducts.length > 0) {
@@ -81,40 +83,49 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
     };
 
 
-    function createOrder(data: any, actions: any) {
-        return actions.order
-            .create({
-                purchase_units: [
-                    {
-                        amount: { value: total },
-                    },
-                ],
-            })
-            .then((orderID: any) => {
-                return orderID;
-            });
-    }
+    // async function getOrderDetails() {
+    //     const totalQuantity = cartProducts?.length;
+    //     console.log({ totalQuantity });
+    //     const uniqueIds = [...new Set(cartProducts)];
+    //     const productInfos = (await axios.post('/api/cart', { ids: uniqueIds })).data;
+    //     let orderItems = [];
 
-    function onApprove(data: any, actions: any) {
-        return actions.order.capture().then(async function (details: any) {
-            try {
-                dispatch({ type: "PAY_REQUEST" });
-                // const { data } = await axios.put(
-                //   `/orders/${order._id}/pay`,
-                //   details
-                // );
+    //     for (const productId of uniqueIds) {
+    //         const productInfo = productInfos.find((p: IProduct) => p._id.toString() === productId);
+    //         const quantity = cartProducts.filter((id: string) => id === productId)?.length || 0;
+    //         if (quantity > 0 && productInfo) {
+    //             orderItems.push({
+    //                 quantity,
+    //                 product_data: productInfo,
+    //                 price_data: {
+    //                     currency: process.env.CURRENCY,
+    //                     totalAmount: quantity * productInfo.price
+    //                 }
 
-                dispatch({ type: "PAY_SUCCESS", payload: true });
-                toast.success("Order is paid");
-            } catch (error: any) {
-                toast.error(error.response.data.error);
-            }
-        });
-    }
-    function onError(err: any) {
-        toast.error(err);
-    }
+    //             });
+    //         }
+    //     }
+    //     console.log({
+    //         ...addressData,
+    //         totalQuantity,
+    //         totalPrice: total,
+    //         items: orderItems, 
+    //     });
 
+    // }
+
+    // getOrderDetails();
+
+
+    if(router.query?.success && router.query?.success === "1") {
+        return (<div>
+        <Header />
+        <div className="bg-white rounded-lg p-7 m-7">
+            <h1 className='my-3'>Thanks for your order</h1>
+            <h4>We will email you when your order will be sent.</h4>
+        </div>
+        </div>)
+    }
 
     return <div>
         <Header />
@@ -162,17 +173,19 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
                         </table>
                     </>)}
             </div>
+
+            
             {cartProducts.length > 0 &&
                 (<div className="bg-white rounded-lg p-7">
                     <h2>Order Information</h2>
-                    <Input placeholder='Name' />
-                    <Input placeholder='Email' />
+                    <Input name='name' onChange={handleAddress} placeholder='Name' />
+                    <Input name='email' onChange={handleAddress} placeholder='Email' />
                     <div className="flex gap-1">
-                        <Input placeholder='City' />
-                        <Input placeholder='Postal Code' />
+                        <Input name='city' onChange={handleAddress} placeholder='City' />
+                        <Input name='postalCode' onChange={handleAddress} placeholder='Postal Code' />
                     </div>
-                    <Input placeholder='Street Address' />
-                    <Input placeholder='Country' />
+                    <Input name='streetAddress' onChange={handleAddress} placeholder='Street Address' />
+                    <Input name='country' onChange={handleAddress} placeholder='Country' />
 
 
                     <PayPalScriptProvider options={{ "client-id": `${process.env.PAYPAL_CLIENT_ID}`, "currency": `${process.env.CURRENCY}` }}>
@@ -192,6 +205,51 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
                                         });
                                     return orderId;
                                 }}
+                                onApprove={(data: any, actions: any) => {
+                                    return actions.order.capture().then(async (details: any) => {
+                                        const name = details.payer.name.given_name;
+
+                                        const totalQuantity = cartProducts?.length;
+                                        console.log({ totalQuantity });
+                                        const uniqueIds = [...new Set(cartProducts)];
+                                        const {data:productInfos} = await axios.post('/api/cart', { ids: uniqueIds })
+                                        let orderItems = [];
+
+                                        for (const productId of uniqueIds) {
+                                            const productInfo = productInfos.find((p: IProduct) => p._id.toString() === productId);
+                                            const quantity = cartProducts.filter((id: string) => id === productId)?.length || 0;
+                                            if (quantity > 0 && productInfo) {
+                                                orderItems.push({
+                                                    quantity,
+                                                    product_data: productInfo,
+                                                    price_data: {
+                                                        currency: process.env.CURRENCY,
+                                                        totalAmount: quantity * productInfo.price
+                                                    }
+
+                                                });
+                                            }
+                                        }
+
+                                        const res = await axios.post('/api/checkout',{
+                                            ...addressData,
+                                            totalQuantity,
+                                            totalPrice: total,
+                                            items: orderItems, 
+                                        })
+
+                                        if(res.data.success) {
+                                            console.log(res.data);
+                                            router.push(`/cart?success=1`)
+                                            toast.success(`Transaction completed by ${session?.user?.name}`);
+
+                                        }
+
+                                        clearCart()
+
+                                    });
+                                }}
+                                onError={(error: any) => toast.error(`Transaction failed. Please try again in 1 minute`)}
                             />
                         )}
                     </PayPalScriptProvider>
