@@ -7,6 +7,7 @@ import Product, { IProduct } from '@/models/Product';
 import { PayPalButtons, PayPalScriptProvider, usePayPalScriptReducer } from '@paypal/react-paypal-js';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { FC, useContext, useEffect, useReducer, useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -58,7 +59,7 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
     const handleAddress = ({ target }: InputChange) => {
         setAddressData({ ...addressData, [target.name]: target.value });
     };
-    
+
     const [products, setProducts] = useState<IProduct[]>();
     useEffect(() => {
         if (isCreateOrder) {
@@ -134,6 +135,7 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
         </div>);
     }
 
+
     const isPaypalDisabled = addressData.name === '' ||
         addressData.email === '' ||
         addressData.city === '' ||
@@ -186,7 +188,7 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
 
 
 
-    return <div>
+    return <>
         <Header />
         <div className="center grid gap-10 grid-cols-[1.3fr_.7fr] mt-7">
             <div className="bg-white rounded-lg p-7">
@@ -285,7 +287,8 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
 
                 </div>)}
         </div>
-    </div>;
+        <script src={`https://www.paypal.com/sdk/js?client-id=${process.env.PAYPAL_CLIENT_ID}&currency=${process.env.CURRENCY}`}></script>
+    </>;
 };
 
 export default CartPage;
