@@ -1,4 +1,5 @@
 import { ImgType } from '@/models/Order';
+import Image from 'next/image';
 import { FC, useState } from 'react';
 
 interface ProductImagesProps {
@@ -22,7 +23,7 @@ const ProductImages: FC<ProductImagesProps> = ({ images }) => {
 
                 <div className={`flex overflow-hidden transition-transform duration-150 gap-x-3`}>
                     {images.map(({ url }, index) => (
-                        <img style={{ transform: `translateX(-${imgIndexTransform * 80}px)` }} key={index} className={` transition-transform duration-150 h-[80px] w-[80px] cursor-pointer object-cover border border-[#ddd] rounded-lg p-1 hover:border-[#79612d] ${index === imgIndex ? "border-black" : ""}`} onClick={() => setImgIndex(index)} src={url} alt={url} />
+                        <Image width={80} height={80} style={{ transform: `translateX(-${imgIndexTransform * 80}px)` }} key={index} className={` z-0 transition-transform duration-150 h-[80px] w-[80px] cursor-pointer object-cover border border-[#ddd] rounded-lg p-1 hover:border-[#79612d] ${index === imgIndex ? "border-black" : ""}`} onClick={() => setImgIndex(index)} src={url} alt={url} />
                     ))}
                 </div>
 
