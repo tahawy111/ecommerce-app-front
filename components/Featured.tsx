@@ -20,7 +20,7 @@ const Featured: FC<FeaturedProps> = ({ product }) => {
                     <p className='text-gray-100/70 font-normal text-sm'>{product.description}</p>
                     <div className="flex gap-1 mt-7">
                         <Link href={`/products/${product._id}`} className="btn-outline">Read More</Link>
-                        <button onClick={() => addProduct(product._id)} className="btn-primary flex items-center gap-x-1">
+                        <button disabled={product.inStock < 1} onClick={() => addProduct(product._id)} className="btn-primary flex items-center gap-x-1">
                             <Icons.CartIcon />
                             <span className="">Add To Cart</span></button>
                     </div>

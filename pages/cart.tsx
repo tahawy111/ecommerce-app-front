@@ -50,13 +50,21 @@ function reducer(state: any, action: any) {
 }
 
 const CartPage: FC<CartPageProps> = ({ }): any => {
-    const { cartProducts, addProduct, removeProduct,clearCart } = useContext(CartContext);
-    const [addressData, setAddressData] = useState<object>();
+    const { cartProducts, addProduct, removeProduct, clearCart } = useContext(CartContext);
+    const [isCreateOrder, setIsCreateOrder] = useState<boolean>(false);
+    const [addressData, setAddressData] = useState({
+        city: "", country: "", email: "", name: "", postalCode: "", streetAddress: ""
+    });
     const handleAddress = ({ target }: InputChange) => {
         setAddressData({ ...addressData, [target.name]: target.value });
     };
-
+    
     const [products, setProducts] = useState<IProduct[]>();
+    useEffect(() => {
+        if (isCreateOrder) {
+            createOrder();
+        }
+    }, [isCreateOrder]);
     useEffect(() => {
         if (cartProducts.length > 0) {
             axios.post('/api/cart', { ids: cartProducts }).then((res) => setProducts(res.data));
@@ -116,16 +124,70 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
 
     // getOrderDetails();
 
-
-    if(router.query?.success && router.query?.success === "1") {
+    if (router.query?.success && router.query?.success === "1") {
         return (<div>
-        <Header />
-        <div className="bg-white rounded-lg p-7 m-7">
-            <h1 className='my-3'>Thanks for your order</h1>
-            <h4>We will email you when your order will be sent.</h4>
-        </div>
-        </div>)
+            <Header />
+            <div className="bg-white rounded-lg p-7 m-7">
+                <h1 className='my-3'>Thanks for your order</h1>
+                <h4>We will email you when your order will be sent.</h4>
+            </div>
+        </div>);
     }
+
+    const isPaypalDisabled = addressData.name === '' ||
+        addressData.email === '' ||
+        addressData.city === '' ||
+        addressData.country === '' ||
+        addressData.postalCode === '' ||
+        addressData.streetAddress === '';
+
+    async function createOrder() {
+        console.log(addressData);
+        const totalQuantity = cartProducts?.length;
+        console.log({ totalQuantity });
+        const uniqueIds = [...new Set(cartProducts)];
+        const { data: productInfos } = await axios.post('/api/cart', { ids: uniqueIds });
+        let orderItems = [];
+
+        for (const productId of uniqueIds) {
+            const productInfo = productInfos.find((p: IProduct) => p._id.toString() === productId);
+            const quantity = cartProducts.filter((id: string) => id === productId)?.length || 0;
+            if (quantity > 0 && productInfo) {
+                orderItems.push({
+                    quantity,
+                    product_data: productInfo,
+                    price_data: {
+                        currency: process.env.CURRENCY,
+                        totalAmount: quantity * productInfo.price
+                    }
+
+                });
+            }
+        }
+
+        const res = await axios.post('/api/checkout', {
+            totalQuantity,
+            totalPrice: total,
+            items: orderItems,
+            name: addressData.name,
+            email: addressData.email,
+            city: addressData.city,
+            country: addressData.country,
+            postalCode: addressData.postalCode,
+            streetAddress: addressData.streetAddress,
+        });
+
+        if (res.data.success) {
+            console.log(res.data);
+            router.push(`/cart?success=1`);
+            toast.success(`Transaction completed by ${session?.user?.name}`);
+
+        }
+
+        clearCart();
+    }
+
+
 
     return <div>
         <Header />
@@ -156,7 +218,7 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
                                             <div className="flex items-center gap-1">
                                                 <button onClick={() => removeProduct(product._id)} className='btn-primary-outline p-1 select-none'>-</button>
                                                 <span>{cartProducts.filter((id) => id === product._id).length}</span>
-                                                <button onClick={() => addProduct(product._id)} className='btn-primary-outline p-1 select-none'>+</button>
+                                                <button disabled={product.inStock <= cartProducts.filter((id) => id === product._id).length} onClick={() => addProduct(product._id)} className='btn-primary-outline p-1 select-none'>+</button>
                                             </div>
                                         </td>
                                         <td>${cartProducts.filter((id) => id === product._id).length * product.price}</td>
@@ -174,7 +236,7 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
                     </>)}
             </div>
 
-            
+
             {cartProducts.length > 0 &&
                 (<div className="bg-white rounded-lg p-7">
                     <h2>Order Information</h2>
@@ -188,11 +250,14 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
                     <Input name='country' onChange={handleAddress} placeholder='Country' />
 
 
+
+                    <label className={`text-gray-500 font-light my-3 ${!isPaypalDisabled && "hidden"}`}>Please fill in address data to do payment with paypal.</label>
+
+
                     <PayPalScriptProvider options={{ "client-id": `${process.env.PAYPAL_CLIENT_ID}`, "currency": `${process.env.CURRENCY}` }}>
                         {total && (
                             <PayPalButtons
-                                createOrder={async (data, actions) => {
-
+                                createOrder={async (data, actions): Promise<any> => {
                                     const orderId = await actions.order
                                         .create({
                                             purchase_units: [
@@ -203,53 +268,19 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
                                                 },
                                             ],
                                         });
+
                                     return orderId;
                                 }}
                                 onApprove={(data: any, actions: any) => {
                                     return actions.order.capture().then(async (details: any) => {
                                         const name = details.payer.name.given_name;
 
-                                        const totalQuantity = cartProducts?.length;
-                                        console.log({ totalQuantity });
-                                        const uniqueIds = [...new Set(cartProducts)];
-                                        const {data:productInfos} = await axios.post('/api/cart', { ids: uniqueIds })
-                                        let orderItems = [];
-
-                                        for (const productId of uniqueIds) {
-                                            const productInfo = productInfos.find((p: IProduct) => p._id.toString() === productId);
-                                            const quantity = cartProducts.filter((id: string) => id === productId)?.length || 0;
-                                            if (quantity > 0 && productInfo) {
-                                                orderItems.push({
-                                                    quantity,
-                                                    product_data: productInfo,
-                                                    price_data: {
-                                                        currency: process.env.CURRENCY,
-                                                        totalAmount: quantity * productInfo.price
-                                                    }
-
-                                                });
-                                            }
-                                        }
-
-                                        const res = await axios.post('/api/checkout',{
-                                            ...addressData,
-                                            totalQuantity,
-                                            totalPrice: total,
-                                            items: orderItems, 
-                                        })
-
-                                        if(res.data.success) {
-                                            console.log(res.data);
-                                            router.push(`/cart?success=1`)
-                                            toast.success(`Transaction completed by ${session?.user?.name}`);
-
-                                        }
-
-                                        clearCart()
+                                        setIsCreateOrder(true);
 
                                     });
                                 }}
                                 onError={(error: any) => toast.error(`Transaction failed. Please try again in 1 minute`)}
+                                disabled={isPaypalDisabled}
                             />
                         )}
                     </PayPalScriptProvider>

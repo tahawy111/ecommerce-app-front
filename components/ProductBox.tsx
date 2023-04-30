@@ -11,7 +11,7 @@ interface ProductBoxProps extends IProduct {
 
 }
 
-const ProductBox: FC<ProductBoxProps> = ({ _id, title, description, images, price }) => {
+const ProductBox: FC<ProductBoxProps> = ({ _id, title, description, images, price, inStock }) => {
     const { addProduct } = useContext(CartContext);
     const url = `/product/${_id}`;
     const router = useRouter();
@@ -27,7 +27,7 @@ const ProductBox: FC<ProductBoxProps> = ({ _id, title, description, images, pric
 
             <div className="flex items-center gap-1 justify-between">
                 <div className='text-2xl font-bold'>${price}</div>
-                <button onClick={() => addProduct(_id)} className='btn-primary-outline py-1'><Icons.CartIcon /></button>
+                <button disabled={inStock < 1} onClick={() => addProduct(_id)} className='btn-primary-outline py-1'><Icons.CartIcon /></button>
             </div>
         </div>
 
