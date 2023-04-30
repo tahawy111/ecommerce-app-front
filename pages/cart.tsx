@@ -58,13 +58,13 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
     const handleAddress = ({ target }: InputChange) => {
         setAddressData({ ...addressData, [target.name]: target.value });
     };
-    
+
     const [products, setProducts] = useState<IProduct[]>();
     useEffect(() => {
         if (isCreateOrder) {
             createOrder();
         }
-    }, [isCreateOrder]);
+    }, [isCreateOrder, createOrder]);
     useEffect(() => {
         if (cartProducts.length > 0) {
             axios.post('/api/cart', { ids: cartProducts }).then((res) => setProducts(res.data));

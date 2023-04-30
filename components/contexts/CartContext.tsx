@@ -28,7 +28,7 @@ export function CartContextProvider({ children }: { children: ReactNode; }) {
         if (cartProducts.length > 0) {
             localStorage.setItem('cart', JSON.stringify(cartProducts));
         }
-    }, [cartProducts]);
+    }, [cartProducts, ls]);
 
     function addProduct(productId: string) {
         setCartProducts((prev: string[]) => [...prev, productId]);
