@@ -1,3 +1,4 @@
+import Header from '@/components/Header';
 import Spinner from '@/components/Spinner';
 import { getError } from '@/lib/getError';
 import axios from 'axios';
@@ -14,9 +15,10 @@ const Login: any = ({ }) => {
     const { data: session, status } = useSession();
     console.log(process.env.NEXTAUTH_URL);
     const loginForm = <div>
+        <Header />
         <div className={`bg-bgGray w-screen h-screen flex items-center`}>
             <div className='text-center w-full'>
-                <button onClick={() => signIn("google")} className='bg-gray-100 p-2 rounded-lg px-4 cursor-pointer hover:bg-gray-200 active:bg-gray-500 transition-colors duration-75'>Login with google</button>
+                <button onClick={() => signIn("google")} className='bg-gray-200 p-2 rounded-lg px-4 cursor-pointer hover:bg-gray-300 active:bg-gray-500 transition-colors duration-75'>Login with google</button>
             </div>
         </div>
     </div>;
