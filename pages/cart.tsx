@@ -142,9 +142,7 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
         addressData.streetAddress === '';
 
     async function createOrder() {
-        console.log(addressData);
         const totalQuantity = cartProducts?.length;
-        console.log({ totalQuantity });
         const uniqueIds = [...new Set(cartProducts)];
         const { data: productInfos } = await axios.post('/api/cart', { ids: uniqueIds });
         let orderItems = [];
@@ -178,7 +176,6 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
         });
 
         if (res.data.success) {
-            console.log(res.data);
             router.push(`/cart?success=1`);
             toast.success(`Transaction completed by ${session?.user?.name}`);
 

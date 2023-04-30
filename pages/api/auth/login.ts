@@ -28,9 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 const login = async (req: NextApiRequest, res: NextApiResponse) => {
     try {
         const { name, email, image, type } = req.body;
-        console.log(req.body);
         const user = await User.findOne({ email });
-        console.log(user);
         
         if (user) {
             const createdPassword = email + process.env.SIGNIN_SECRET;
@@ -38,7 +36,6 @@ const login = async (req: NextApiRequest, res: NextApiResponse) => {
             // if (!isMatch) return res.status(403).json({ msg: "Password isn't match" });
             const { ...user2 } = user;
             const access_token = generateAccessToken({ id: user._id });
-            console.log({ msg: "Login success!", access_token, user: user2 });
             res.json({ msg: "Login success!", access_token, user: user2 });
         } else {
             // create user and login

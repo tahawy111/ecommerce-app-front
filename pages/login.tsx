@@ -13,7 +13,6 @@ interface LoginProps {
 
 const Login: any = ({ }) => {
     const { data: session, status } = useSession();
-    console.log(process.env.NEXTAUTH_URL);
     const loginForm = <div>
         <Header />
         <div className={`bg-bgGray w-screen h-screen flex items-center`}>
@@ -28,7 +27,6 @@ const Login: any = ({ }) => {
         try {
             const res = await axios.post('/api/auth/login', { ...session?.user, type: "login" });
             router.push('/');
-            console.log(res);
 
         } catch (error) {
             console.log(error);

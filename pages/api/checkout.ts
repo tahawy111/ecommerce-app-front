@@ -27,12 +27,10 @@ async function createOrder(req: NextApiRequest, res: NextApiResponse) {
 
 
         for (const item of req.body.items) {
-            console.log(item.product_data._id);
 
             const product = await Product.findById(item.product_data._id);
             if (!product) return res.status(400).json({ msg: "This product isn't exist." });
             product.inStock -= item.quantity;
-            console.log(product);
 
             await Product.findByIdAndUpdate(item.product_data._id, product);
 
