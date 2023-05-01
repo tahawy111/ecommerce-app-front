@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { FC, useContext } from 'react';
 import { Icons } from './Icons';
 import { CartContext, CartContextInteface } from './contexts/CartContext';
+import { toast } from 'react-hot-toast';
 
 interface FeaturedProps {
     product: IProduct;
@@ -20,7 +21,10 @@ const Featured: FC<FeaturedProps> = ({ product }) => {
                     <p className='text-gray-100/70 font-normal text-sm'>{product.description}</p>
                     <div className="flex gap-1 mt-7">
                         <Link href={`/product/${product._id}`} className="btn-outline">Read More</Link>
-                        <button disabled={product.inStock < 1} onClick={() => addProduct(product._id)} className="btn-primary flex items-center gap-x-1">
+                        <button disabled={product.inStock < 1} onClick={() => {
+                            addProduct(product._id)
+                            toast.success('Product added to cart')
+                        }} className="btn-primary flex items-center gap-x-1">
                             <Icons.CartIcon />
                             <span className="">Add To Cart</span></button>
                     </div>

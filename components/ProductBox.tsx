@@ -6,6 +6,7 @@ import { Icons } from './Icons';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { CartContext } from './contexts/CartContext';
+import { toast } from 'react-hot-toast';
 
 interface ProductBoxProps extends IProduct {
 
@@ -27,7 +28,10 @@ const ProductBox: FC<ProductBoxProps> = ({ _id, title, description, images, pric
 
             <div className="flex items-center gap-1 justify-between">
                 <div className='text-2xl font-bold'>${price}</div>
-                <button disabled={inStock < 1} onClick={() => addProduct(_id)} className='btn-primary-outline py-1'><Icons.CartIcon /></button>
+                <button disabled={inStock < 1} onClick={() => {
+                    addProduct(_id)
+                    toast.success('Product added to cart')
+                    }} className='btn-primary-outline py-1'><Icons.CartIcon /></button>
             </div>
         </div>
 

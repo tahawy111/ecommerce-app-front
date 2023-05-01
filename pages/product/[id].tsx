@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import ProductImages from '@/components/ProductImages';
 import { CartContext } from '@/components/contexts/CartContext';
 import { Icons } from '@/components/Icons';
+import { toast } from 'react-hot-toast';
 
 interface ProductPageProps {
     product: IProduct;
@@ -25,7 +26,10 @@ const ProductPage: FC<ProductPageProps> = ({ product }) => {
 
                     <div className="flex items-center gap-1 justify-between">
                         <div className='text-2xl font-bold'>${product.price}</div>
-                        <button disabled={product.inStock < 1} onClick={() => addProduct(product._id)} className='btn-primary-outline py-1'><span className='flex items-center gap-3'><div className="">Add To Cart</div> <Icons.CartIcon /></span></button>
+                        <button disabled={product.inStock < 1} onClick={() => {
+                            addProduct(product._id)
+                            toast.success('Product added to cart')
+                        }} className='btn-primary-outline py-1'><span className='flex items-center gap-3'><div className="">Add To Cart</div> <Icons.CartIcon /></span></button>
                     </div>
 
                 </div>

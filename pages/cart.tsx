@@ -190,7 +190,7 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
 
     return <>
         <Header />
-        <div className="center grid gap-10 grid-cols-[1.3fr_.7fr] mt-7">
+        <div className="center grid gap-0 grid-cols-1 md:gap-10 md:grid-cols-[1.3fr_.7fr] mt-7">
             <div className="bg-white rounded-lg p-7">
                 <h2 className='my-3'>Cart</h2>
                 {cartProducts.length < 1 && (<div>Your Cart Is Empty</div>)}
