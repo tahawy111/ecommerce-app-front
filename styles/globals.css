@@ -75,15 +75,15 @@ table.basic tbody tr td {
 }
 table.basic tbody tr td,
 table.basic thead tr th {
-  @apply px-4 py-1;
+  @apply px-1 md:px-4 py-1;
 }
 table.basic a {
-  @apply px-4 rounded-sm inline-flex mx-1 items-center gap-1 text-sm py-1;
+  @apply px-1 md:px-4 rounded-sm inline-flex mx-1 items-center gap-1 text-sm py-1;
 }
 input,
 textarea,
 select {
-  @apply border border-gray-200 rounded-sm py-2 w-full mb-2 shadow-sm px-1;
+  @apply border border-gray-200 rounded-sm py-2 w-full mb-2 shadow-sm px-1 md:px-1;
 }
 input:focus,
 textarea:focus,
