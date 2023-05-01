@@ -27,7 +27,7 @@ const ProductImages: FC<ProductImagesProps> = ({ images }) => {
                     ))}
                 </div>
 
-                <svg onClick={() => setImgIndexTransform((prev) => imgIndexTransform >= images.length - 3 ? prev : prev + 1)} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-12 h-12 cursor-pointer select-none ${images.length < 3 && "pointer-events-none opacity-50"}`}>
+                <svg onClick={() => setImgIndexTransform((prev) => imgIndexTransform >= images.length - 5 ? prev : prev + 1)} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-12 h-12 cursor-pointer select-none ${images.length < 3 && "pointer-events-none opacity-50"}`}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                 </svg>
 
