@@ -81,15 +81,15 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
     const { data: session, status } = useSession();
     const router = useRouter();
 
-    // if (session === undefined && status === "loading") {
-    //     return <div className="flex w-full h-screen justify-center items-center">
-    //         <Spinner loading />
-    //     </div>;
-    // }
-    // if (!session) {
-    //     router.push('/login');
-    //     return;
-    // };
+    if (session === undefined && status === "loading") {
+        return <div className="flex w-full h-screen justify-center items-center">
+            <Spinner loading />
+        </div>;
+    }
+    if (!session) {
+        router.push('/login');
+        return;
+    };
 
 
     // async function getOrderDetails() {
@@ -190,7 +190,7 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
 
     return <>
         <Header />
-        <div className="md:center grid gap-1 md:gap-10 grid-cols-1 md:grid-cols-[1.3fr_.7fr] mt-7">
+        <div className="center grid gap-1 md:gap-10 grid-cols-1 md:grid-cols-[1.3fr_.7fr] mt-7">
             <div className="bg-white rounded-lg p-1 md:p-7">
                 <h2 className='my-3'>Cart</h2>
                 {cartProducts.length < 1 && (<div>Your Cart Is Empty</div>)}

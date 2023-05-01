@@ -15,7 +15,7 @@ const ProductImages: FC<ProductImagesProps> = ({ images }) => {
 
         <div className={``}>
             <img className='border border-[#ddd] rounded-lg p-1 w-full object-contain h-[520px]' src={images[imgIndex].url} alt={images[imgIndex].url} />
-            <div className={`flex m-3 items-center justify-center items-center`}>
+            <div className={`flex m-3 justify-center items-center`}>
 
                 <svg onClick={() => (getThis(document) as Document).getElementById(DevImgsId)!.scrollLeft -= 100} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className={`w-12 h-12 cursor-pointer select-none ${images.length < 3 && "pointer-events-none opacity-50"}`}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
