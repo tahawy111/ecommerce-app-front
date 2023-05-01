@@ -191,7 +191,7 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
     return <>
         <Header />
         <div className="center grid gap-10 grid-cols-1 md:grid-cols-[1.3fr_.7fr] mt-7">
-            <div className="bg-white rounded-lg p-7">
+            <div className="bg-white rounded-lg p-1 md:p-7">
                 <h2 className='my-3'>Cart</h2>
                 {cartProducts.length < 1 && (<div>Your Cart Is Empty</div>)}
                 {cartProducts.length > 0 && (
@@ -208,7 +208,7 @@ const CartPage: FC<CartPageProps> = ({ }): any => {
                                 {products?.map((product: IProduct) => (
                                     <tr key={product._id}>
                                         <td className='py-3'>
-                                            <div className="w-[100px] h-[100px] p-2 shadow-md border rounded-lg flex items-center justify-center">
+                                            <div className="w-[100px] h-[100px] shadow-md border rounded-lg flex items-center justify-center">
                                                 <img className='max-h-20 max-w-20' src={product.images[0].url} alt="" />
                                             </div>
                                             {product.title}
