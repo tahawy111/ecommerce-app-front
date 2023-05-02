@@ -5,10 +5,10 @@ const config: CapacitorConfig = {
   appName: 'ecommerce-app-front',
   webDir: 'out',
   bundledWebRuntime: false,
-  // server: {
-  //   url: "http://192.168.15.4:3000",
-  //   cleartext: true
-  // }
+  server: {
+    url: "https://ecommerce-app-front.vercel.app/",
+    cleartext: true
+  }
 };
 
 export default config;
