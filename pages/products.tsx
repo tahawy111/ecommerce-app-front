@@ -18,7 +18,7 @@ const Products: FC<productsProps> = () => {
     return <>
         <Header />
 
-        <div className="center">
+        <div className="big-center">
             <h2 className='font-medium my-7'>All Products</h2>
             <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-16 pt-5'>
                 {products && products.map((product: IProduct) => (<ProductBox {...product} key={product._id} />))}
