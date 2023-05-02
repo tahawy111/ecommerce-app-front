@@ -4,6 +4,11 @@ const nextConfig = {
   images: {
     domains: ["res.cloudinary.com"],
   },
+  experimental: {
+    images: {
+      unoptimized: true,
+    },
+  },
   env: {
     GOOGLE_ID:
       "93804304731-hib75m25vrndp62uhdi5ir0ehi9q7144.apps.googleusercontent.com",
@@ -22,7 +27,8 @@ const nextConfig = {
       "jME<cpk\\#Q:nLg'_>uzf)xNmxK>DT@t3HmsWT+gYzR!ZzN4dd9)RpXGw3`p'PF<J",
     REFRESH_TOKEN_SECRET:
       "H8TRsUa*uVL*&AL+@nXU4fMS9Hj<~Qr*~?jy.,p*&ShSCq8$p.}a.q8yt^d_N%7h",
-      PAYPAL_CLIENT_ID: "ATpWaUL343-J4tlGbFemr1OyLAMxI-ucOldqZvYcsAJtzAq1l_ORH2C37OoivyjxH7dplRe7qufhhyC2"
+    PAYPAL_CLIENT_ID:
+      "ATpWaUL343-J4tlGbFemr1OyLAMxI-ucOldqZvYcsAJtzAq1l_ORH2C37OoivyjxH7dplRe7qufhhyC2",
   },
 };
 

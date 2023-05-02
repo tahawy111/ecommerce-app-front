@@ -40,6 +40,9 @@ h6 {
 .center {
   @apply mx-auto sm:container sm:px-5;
 }
+.big-center {
+  @apply sm:container mx-auto px-5;
+}
 .btn-primary {
   @apply bg-primary text-white px-4 rounded-sm font-semibold shadow-sm;
 }

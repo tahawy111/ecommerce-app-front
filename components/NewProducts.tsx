@@ -7,7 +7,7 @@ interface NewProductsProps {
 }
 
 const NewProducts: FC<NewProductsProps> = ({ products }) => {
-    return <div className="center">
+    return <div className="big-center">
         <h2 className='font-medium my-7'>New Arrivals</h2>
         <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-16 pt-5'>
             {products.map((product: IProduct) => (<ProductBox {...product} key={product._id} />))}

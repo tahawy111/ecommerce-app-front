@@ -24,7 +24,7 @@ const Header: FC<HeaderProps> = ({ }) => {
 
     return <div className='bg-main'>
 
-        <div className="center flex justify-between py-5">
+        <div className="big-center flex justify-between py-5">
             <Link className='text-white' href={'/'}>Ecommerce</Link>
             <nav className={`py-14 pl-7 z-10 ${mobileNavActive ? "block" : "hidden"} fixed top-0 bottom-0 left-0 right-0 p-5 bg-main md:flex md:static md:bg-transparent md:p-0`}>
                 {mobileNavActive && <div className='flex items-center justify-between'>
