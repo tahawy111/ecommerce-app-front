@@ -4,6 +4,7 @@ import NewProducts from '@/components/NewProducts';
 import { loadFeatued } from '@/lib/loadApis';
 import { IProduct } from '@/models/Product';
 import axios from 'axios';
+import Head from 'next/head';
 import { FC, useEffect, useState } from 'react';
 
 interface HomeProps {
@@ -16,7 +17,12 @@ const Home: FC<HomeProps> = () => {
   useEffect(() => {
     axios.get(`/api/products/getFeatured`).then((res) => setData(res.data));
   }, []);
-  return <div>
+  return <>
+  <Head>
+  <link rel="manifest" href="/manifest.json" />
+  <title>Ecommerce</title>
+  </Head>
+  <div>
     <Header />
     {data && (
       <>
@@ -24,7 +30,8 @@ const Home: FC<HomeProps> = () => {
         <NewProducts products={data.newProducts} />
       </>
     )}
-  </div>;
+  </div>
+  </>;
 };
 
 export default Home;

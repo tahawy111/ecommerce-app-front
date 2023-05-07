@@ -1,5 +1,8 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+const withPWA = require("next-pwa")({
+  dest: "public",
+});
+const nextConfig = withPWA({
   reactStrictMode: true,
   images: {
     domains: ["res.cloudinary.com"],
@@ -30,6 +33,6 @@ const nextConfig = {
     PAYPAL_CLIENT_ID:
       "ATpWaUL343-J4tlGbFemr1OyLAMxI-ucOldqZvYcsAJtzAq1l_ORH2C37OoivyjxH7dplRe7qufhhyC2",
   },
-};
+});
 
 module.exports = nextConfig;
