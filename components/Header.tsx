@@ -15,8 +15,8 @@ interface HeaderProps {
 const Header: FC<HeaderProps> = ({ }) => {
     const { data: session } = useSession();
     const { cartProducts } = useContext(CartContext);
-    const [mobileNavActive, setMobileNavActive] = useState<boolean>(true);
     const router = useRouter()
+    const [mobileNavActive, setMobileNavActive] = useState<boolean>(true);
 
     useEffect(() => {
         setMobileNavActive(false)
